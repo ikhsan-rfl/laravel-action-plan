@@ -8,4 +8,3 @@ services:
       - "8000:80"
     volumes:
       - .:/var/www/html
-      - ./docker-pre-exec.sh:/startup/00-laravel-init
