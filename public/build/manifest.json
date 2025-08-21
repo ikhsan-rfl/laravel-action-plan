@@ -1,0 +1,20 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-B5wLl6MM.css",
+    "src": "resources/css/app.css",
+    "isEntry": true,
+    "names": [
+      "app.css"
+    ]
+  },
+  "resources/fonts/excalifont/Excalifont-Regular.woff2": {
+    "file": "assets/Excalifont-Regular-C9eKQy_N.woff2",
+    "src": "resources/fonts/excalifont/Excalifont-Regular.woff2"
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-C0G0cght.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  }
+}
