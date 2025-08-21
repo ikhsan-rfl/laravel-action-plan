@@ -1,4 +1,4 @@
-composer install
-php artisan key:generate
+composer install --no-dev
 php artisan migrate:fresh --force
 php artisan storage:link
+php artisan key:generate
