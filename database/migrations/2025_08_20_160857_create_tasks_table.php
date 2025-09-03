@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('details', 2048)->nullable();
             $table->enum('priority', [1, 2, 3]);
             $table->date('due_date')->nullable();
-            $table->boolean('category_id')->nullable();
+            $table->integer('category_id');
             $table->boolean('completed')->default(false);
             $table->timestamps();
         });

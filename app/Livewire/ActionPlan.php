@@ -9,12 +9,14 @@ use App\Models\Category;
 
 use Illuminate\View\View;
 use Livewire\Attributes\On;
+use App\Queries\ActionPlanQuery;
 use Livewire\Attributes\Computed;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class ActionPlan extends Component
 {
+    public int $DEFAULT_LIMIT = 3;
 
     public string $priority;
     public string $content;
@@ -23,7 +25,7 @@ class ActionPlan extends Component
     public string $details = '';
 
     public string $filter = '';
-    public int $category_id = 0;
+    public int $categoryId = 0;
     public int $limit = 3;
 
     /**
@@ -31,30 +33,17 @@ class ActionPlan extends Component
      *
      * @return LengthAwarePaginator
      */
+    #[Computed]
     public function tasks(): LengthAwarePaginator
     {
         $filter = $this->filter;
-        $task = Tasks::orderBy('priority', 'asc');
+        $categoryId = $this->categoryId;
 
-        if ($filter === 'today') {
-            $task->where('due_date', Carbon::now()->format('Y-m-d'))
-                ->where('completed', false);
-        } elseif ($filter === '7days') {
-            $task->where('due_date', '<=', Carbon::now()->addDays(7)->format('Y-m-d'))
-                ->where('completed', false);
-        } elseif ($filter === 'completed') {
-            $task->where('completed', true);
-        } else {
-            $task->where('completed', false);
-        }
+        $tasks = ActionPlanQuery::getTasks($filter, $categoryId)
+            ->orderBy('priority', 'asc')
+            ->paginate($this->limit);
 
-        if ($this->category_id) {
-            $task->where('category_id', $this->category_id);
-        }
-
-        $task = $task->paginate($this->limit);
-
-        $task->each(function ($task) {
+        $tasks->each(function ($task) {
             $task->priority = match ($task->priority) {
                 '1' => 'High',
                 '2' => 'Medium',
@@ -72,7 +61,7 @@ class ActionPlan extends Component
             $task->due_date = Carbon::parse($task->due_date)->locale('id')->translatedFormat('d F Y');
         });
 
-        return $task;
+        return $tasks;
     }
 
     public function loadMore(): void
@@ -81,10 +70,11 @@ class ActionPlan extends Component
     }
 
     #[On('filter-tasks')]
-    public function setFilter(string $filter, int $category_id = 0): void
+    public function setFilter(string $filter, int $categoryId = 0): void
     {
         $this->filter = $filter;
-        $this->category_id = $category_id;
+        $this->categoryId = $categoryId;
+        $this->limit = $this->DEFAULT_LIMIT;
     }
 
     /**
@@ -138,8 +128,6 @@ class ActionPlan extends Component
      */
     public function edit(Tasks $task, string $text): void
     {
-        // dd($task, $text);
-
         $task->update(['content' => $text]);
     }
 

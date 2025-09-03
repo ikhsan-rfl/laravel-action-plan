@@ -72,7 +72,7 @@
                     </div>
 
                     <select wire:model="category" class="p-2 border border-gray-300 rounded-xl w-full">
-                        <option value="">Pilih Kategori</option>
+                        <option value="0">Pilih Kategori</option>
                         @foreach ($this->categories as $category)
                             <option value="{{ $category->id }}">{{ $category->name }}</option>
                         @endforeach

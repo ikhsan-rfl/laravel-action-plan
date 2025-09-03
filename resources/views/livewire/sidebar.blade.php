@@ -1,6 +1,6 @@
-<div
+<div x-on:task-changed.window="$wire.$refresh()"
     class="flex h-screen w-full flex-col rounded-xl bg-white bg-clip-border p-4 text-gray-700 shadow-xl shadow-blue-gray-900/5">
-    <nav x-data="{ filter: @entangle('filter'), category_id: @entangle('category_id') }"
+    <nav x-data="{ filter: @entangle('filter'), categoryId: @entangle('categoryId') }"
         class="flex w-full flex-col gap-1 p-2 font-sans text-base font-normal text-blue-gray-700">
         <div role="button" wire:click="$dispatch('filter-tasks', {filter: 'today'})"
             :class="filter === 'today' ? 'bg-gray-300' : ''"
@@ -13,7 +13,7 @@
                 </svg>
             </div>
             Hari Ini
-            <span class="ml-auto text-gray-500">{{ $tasks_info->today ?? 0 }}</span>
+            <span class="ml-auto text-gray-500">{{ $this->countTodayTasks() ?? 0 }}</span>
         </div>
         <div role="button" wire:click="$dispatch('filter-tasks', {filter: '7days'})"
             :class="filter === '7days' ? 'bg-gray-300' : ''"
@@ -26,14 +26,14 @@
                 </svg>
             </div>
             7 hari kedepan
-            <span class="ml-auto text-gray-500">{{ $tasks_info->seven_days ?? 0 }}</span>
+            <span class="ml-auto text-gray-500">{{ $this->count7DaysTasks() ?? 0 }}</span>
         </div>
         <hr class="my-2 border-blue-gray-50" />
         <h6 class="text-sm font-semibold text-blue-gray-600">Kategori</h6>
         @foreach ($this->categories as $category)
             <div role="button"
-                wire:click="$dispatch('filter-tasks', {filter: 'category', category_id: {{ $category->id }}})"
-                :class="filter === 'category' && category_id === {{ $category->id }} ? 'bg-gray-300' : ''"
+                wire:click="$dispatch('filter-tasks', {filter: 'category', categoryId: {{ $category->id }}})"
+                :class="filter === 'category' && categoryId === {{ $category->id }} ? 'bg-gray-300' : ''"
                 class="flex items-center cursor-pointer w-full p-3 leading-tight transition-all rounded-lg outline-none text-start hover:bg-gray-100 active:bg-gray-200">
                 <div class="grid mr-4 place-items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -58,7 +58,7 @@
                 </svg>
             </div>
             Selesai
-            <span class="ml-auto text-gray-500">{{ $tasks_info->completed ?? 0 }}</span>
+            <span class="ml-auto text-gray-500">{{ $this->countCompletedTasks() ?? 0 }}</span>
         </div>
     </nav>
 </div>

@@ -2,11 +2,8 @@
 
 namespace App\Livewire;
 
-use App\Models\Tasks;
 use Livewire\Component;
-use App\Models\Category;
-use Carbon\Carbon;
-use Illuminate\Console\View\Components\Task;
+use App\Queries\SidebarQuery;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Computed;
 use Illuminate\Database\Eloquent\Collection;
@@ -14,7 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
 class Sidebar extends Component
 {
     public string $filter = '';
-    public int $category_id = 0;
+    public int $categoryId = 0;
     public object $tasks_info;
 
     /**
@@ -25,50 +22,29 @@ class Sidebar extends Component
     #[Computed]
     public function categories(): Collection
     {
-        return Category::withCount('tasks')->get();
+        return SidebarQuery::getCategoryCounts();
     }
 
     #[On('filter-tasks')]
-    public function setFilter(string $filter, int $category_id = 0): void
+    public function setFilter(string $filter, int $categoryId = 0): void
     {
         $this->filter = $filter;
-        $this->category_id = $category_id;
+        $this->categoryId = $categoryId;
     }
 
-    public function mount()
+    public function countTodayTasks(): int
     {
-        $applyCategory = function ($q) {
-            $q->where('category_id', $this->category_id);
-        };
-
-        // today
-        $today = Tasks::when($this->category_id, $applyCategory)
-            ->where('due_date', date('Y-m-d'))
-            ->where('completed', false)
-            ->count();
-
-        // 7 days
-        $seven_days = Tasks::when($this->category_id, $applyCategory)
-            ->where('due_date', '<=', Carbon::now()->addDays(7)->format('Y-m-d'))
-            ->where('completed', false)
-            ->count();
-
-        // completed
-        $completed = Tasks::when($this->category_id, $applyCategory)
-            ->where('completed', true)
-            ->count();
-
-        $this->tasks_info = (object) [
-            'today' => $today,
-            'seven_days' => $seven_days,
-            'completed' => $completed,
-        ];
+        return SidebarQuery::countTodayTasks();
     }
 
-    #[On('task-changed')]
-    public function refreshComponent(): void
+    public function count7DaysTasks(): int
     {
-        $this->mount();
+        return SidebarQuery::count7DaysTasks();
+    }
+
+    public function countCompletedTasks(): int
+    {
+        return SidebarQuery::countCompletedTasks();
     }
 
     public function render()
