@@ -11,14 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tasks', function (Blueprint $table) {
+        Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->string('content', 255);
-            $table->string('details', 2048)->nullable();
-            $table->enum('priority', [1, 2, 3]);
-            $table->date('due_date')->nullable();
-            $table->boolean('category_id')->nullable();
-            $table->boolean('completed')->default(false);
+            $table->string('name', 255);
             $table->timestamps();
         });
     }
@@ -28,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tasks');
+        Schema::dropIfExists('categories');
     }
 };
