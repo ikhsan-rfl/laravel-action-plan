@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 class Sidebar extends Component
 {
-    public string $filter = 'today';
+    public string $filter = '';
     public int $category_id = 0;
     public object $tasks_info;
 
