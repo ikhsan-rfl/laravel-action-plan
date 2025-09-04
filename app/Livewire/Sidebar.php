@@ -13,6 +13,7 @@ class Sidebar extends Component
     public string $filter = '';
     public int $categoryId = 0;
     public object $tasks_info;
+    protected SidebarQuery $sidebarQuery;
 
     /**
      * Get the categories for the task.
@@ -32,19 +33,24 @@ class Sidebar extends Component
         $this->categoryId = $categoryId;
     }
 
+    public function boot(SidebarQuery $sidebarQuery): void
+    {
+        $this->sidebarQuery = $sidebarQuery;
+    }
+
     public function countTodayTasks(): int
     {
-        return SidebarQuery::countTodayTasks();
+        return $this->sidebarQuery->countTodayTasks();
     }
 
     public function count7DaysTasks(): int
     {
-        return SidebarQuery::count7DaysTasks();
+        return $this->sidebarQuery->count7DaysTasks();
     }
 
     public function countCompletedTasks(): int
     {
-        return SidebarQuery::countCompletedTasks();
+        return $this->sidebarQuery->countCompletedTasks();
     }
 
     public function render()

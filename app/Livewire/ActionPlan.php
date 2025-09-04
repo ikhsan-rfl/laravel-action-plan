@@ -16,6 +16,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class ActionPlan extends Component
 {
+    protected ActionPlanQuery $actionPlanQuery;
     public int $DEFAULT_LIMIT = 3;
 
     public string $priority;
@@ -28,6 +29,10 @@ class ActionPlan extends Component
     public int $categoryId = 0;
     public int $limit = 3;
 
+    public function boot(ActionPlanQuery $actionPlanQuery): void
+    {
+        $this->actionPlanQuery = $actionPlanQuery;
+    }
     /**
      * Get the tasks based on the current filter, ordered by priority.
      *
@@ -39,7 +44,7 @@ class ActionPlan extends Component
         $filter = $this->filter;
         $categoryId = $this->categoryId;
 
-        $tasks = ActionPlanQuery::getTasks($filter, $categoryId)
+        $tasks = $this->actionPlanQuery->getTasks($filter, $categoryId)
             ->orderBy('priority', 'asc')
             ->paginate($this->limit);
 
@@ -102,6 +107,10 @@ class ActionPlan extends Component
             'category' => 'nullable|integer',
             'details' => 'nullable|string',
         ]);
+
+        if (!$this->category) {
+            $this->category = 0;
+        }
 
         if (!$this->due_date) {
             $this->due_date = Carbon::now()->format('Y-m-d');
